@@ -1,4 +1,5 @@
 (ns domains.core
+  (:gen-class)
   (:use overtone.at-at)
   (:require [domains.fetcher :as fetch]))
 

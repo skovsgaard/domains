@@ -7,4 +7,5 @@
                  [clj-http "2.3.0"]
                  [enlive "1.1.6"]
                  [overtone/at-at "1.2.0"]]
-  :main domains.core)
+  :main domains.core
+  :aot [domains.core])
