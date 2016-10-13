@@ -5,4 +5,6 @@
             :url "https://www.mozilla.org/media/MPL/2.0/index.815ca599c9df.txt"}
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [clj-http "2.3.0"]
-                 [enlive "1.1.6"]])
+                 [enlive "1.1.6"]
+                 [overtone/at-at "1.2.0"]]
+  :main domains.core)
