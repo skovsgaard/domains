@@ -1,27 +1,46 @@
 (ns domains.core
-  (:require [clj-http.client :as client])
-  (:use net.cgrand.enlive-html))
+  (:require [net.cgrand.enlive-html :as html]
+            [clj-http.client :as client]))
 
-(def- url "https://en.unoeuro.com/services/ninja.php")
+(def url "https://en.unoeuro.com/services/ninja.php")
 
-(defn- take-names [domain-list]
-  (map (fn [x] (get x :content)) domain-list))
+(defn fetch-url [url]
+  (html/html-snippet (:body (client/get url))))
 
-(defn- take-timestamps [time-list]
-  (map (fn [x] (get (get x :attrs) :data-sort-value)) time-list))
+(defn get-tds []
+  (html/select (fetch-url url) [:table.ui-table-grid :td]))
 
-(defn- drop-every [n coll]
+(defn drop-every [col n]
   (lazy-seq
-   (if (seq coll)
-     (concat (take (dec n) coll)
-             (drop-every n (drop n coll))))))
+    (if (seq col)
+      (concat (take (dec n) col)
+              (drop-every (drop n col) n)))))
 
-(defn expired-domains
-  "Return a list of 2 entry vectors containing a .dk domain and date of expiry."
-  []
-  (let [doc (get (client/get url) :body)
-        parsed-content (html-content doc)
-        target-table (select parsed-content [:table.ui-table-grid])
-        cells (drop-every 3 (select target-table [:td]))
-        domains (take-names (take-nth 2 cells))
-        times (take-timestamps (take-nth 2 (rest cells)))]))
+(defn take-name-tds [tds]
+  (take-nth 2 (drop-every tds 3)))
+
+(defn take-time-tds [tds]
+  (take-nth 2 (rest (drop-every tds 3))))
+
+(defn get-names-from-tds [name-tds]
+  (map (fn [td] (first (get td :content)))
+       name-tds))
+
+(defn get-timestamps-from-tds [time-tds]
+  (map (fn [td] (-> td
+                   (get :attrs)
+                   (get :data-sort-value)))
+       time-tds))
+
+(defn merge-names-and-times [name-col time-col]
+  (map (fn [pair]
+         (let [[domain-name timestamp] pair]
+           {:domain domain-name :timestamp timestamp}))
+       (map vector name-col time-col)))
+
+(defn run []
+  (let [tds (get-tds)
+        names (get-names-from-tds (take-name-tds tds))
+        times (get-timestamps-from-tds (take-time-tds tds))
+        merged (merge-names-and-times names times)]
+    merged))
