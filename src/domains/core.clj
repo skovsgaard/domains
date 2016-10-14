@@ -11,8 +11,14 @@
   either from the first command line argument or from the default of once a day."
   (let [interval (if (first args)
                    (Integer/parseInt (first args))
-                   one-day-in-ms)]
+                   one-day-in-ms)
+        curr-time (str (java.time.LocalDateTime/now))
+        curr-date (first (clojure.string/split curr-time #"T"))]
     (every interval
-           #(do (spit "domain-data.edn" (pr-str (fetch/run)) :append false)
-                (println "Fetched and saved domain expiry times."))
+           #(do (spit (str "domain-data-" curr-date ".edn")
+                      (pr-str (fetch/run)) :append false)
+                (println
+                 (str curr-time
+                      ": "
+                      "Fetched and saved domain expiry times.")))
            at-at-pool)))
