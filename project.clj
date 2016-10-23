@@ -1,4 +1,4 @@
-(defproject domains "0.1.0-SNAPSHOT"
+(defproject domains "0.2.0"
   :description "An app to fetch a list of recently expired .dk domains at intervals."
   :url "http://example.com/TBD"
   :license {:name "Mozilla Public License"
