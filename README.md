@@ -6,7 +6,7 @@ A Clojure app that once every 24 hours scrapes a list of recently expired .dk do
 
 `lein uberjar` will build you a nice complete package out of this.
 
-Run that with `java -jar $YOURNEWJARFILE` and optionally with a number after that command. That number is - in milliseconds - how often to ask for the data. You probably want it to be high; the default is a full 24 hours and the feed we're scraping doesn't change super frequently.
+Run that with `java -jar $YOURNEWJARFILE` and optionally with a number after that command in the format `-i $SOME_INTERVAL`. That number is - in milliseconds - how often to ask for the data. You probably want it to be high; the default is a full 24 hours and the feed we're scraping doesn't change super frequently.
 
 ## License
 
